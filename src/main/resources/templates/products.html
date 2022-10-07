@@ -1,0 +1,19 @@
+<html>
+
+<head>
+    <title>Общий список продуктов</title>
+</head>
+<body>
+<h1>Список продуктов</h1>
+
+
+<table>
+    <tr th:each="product:${products}">
+        <td th:text="${product.id}"></td>
+        <td th:text="${product.title}"></td>
+        <td th:text="${product.price}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

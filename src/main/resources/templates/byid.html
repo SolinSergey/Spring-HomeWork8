@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск продукта по заданному id</title>
+</head>
+<body>
+<h3>
+<table>
+    <tr th:each="res:${result}">
+        <td>id=<th th:text="${res.id}"></th></td><td th:text="${res.title}"></td><td th:text="${res.price}"></td>
+    </tr>
+</table>
+</h3>
+</body>
+</html>
