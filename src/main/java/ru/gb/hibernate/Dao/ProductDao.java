@@ -19,55 +19,43 @@ public class ProductDao {
 
     public Product findById(Long id) {
         Product product = null;
-        try {
-            Session session = daoConnection.getSessionFactory().getCurrentSession();
+        try (Session session = daoConnection.getSessionFactory().getCurrentSession()) {
             session.beginTransaction();
             product = session.get(Product.class, id);
             session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return product;
     }
 
     public List<Product> findAll() {
         List<Product> list = null;
-        try {
-            Session session = daoConnection.getSessionFactory().getCurrentSession();
+        try (Session session = daoConnection.getSessionFactory().getCurrentSession()) {
             session.beginTransaction();
             list = session.createQuery("from Product").getResultList();
             session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return list;
     }
 
     public void deleteById(Long id) {
-        try {
-            Session session = daoConnection.getSessionFactory().getCurrentSession();
+        try (Session session = daoConnection.getSessionFactory().getCurrentSession()) {
             session.beginTransaction();
             Product product = session.get(Product.class, id);
             session.delete(product);
             session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
     public Product saveOrUpdate(Product product) {
         Product productNew = new Product();
         try {
             Session session = daoConnection.getSessionFactory().getCurrentSession();
-
             productNew.setTitle(product.getTitle());
             productNew.setPrice(product.getPrice());
 
             session.beginTransaction();
             session.saveOrUpdate(productNew);
             session.getTransaction().commit();
-
 
             session = daoConnection.getSessionFactory().getCurrentSession();
             session.beginTransaction();
