@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.gb.hibernate.Dao.ProductDao;
 import ru.gb.hibernate.entities.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/product")
 public class ProductController {
     private ProductDao productDao;
+
 
     @Autowired
     public void setProductDao(ProductDao productDao) {
@@ -27,21 +29,26 @@ public class ProductController {
         return "byid";
     }
 
-    @GetMapping("/findall")
-    public String showFindAll(Model model) {
+    @GetMapping("/findall/{page}")
+    public String showFindAll(Model model, @PathVariable(value="page") int page) {
         List<Product> list = null;
-        list = productDao.findAll();
+        list = productDao.findAll(page);
+        ArrayList<Integer> pages=new ArrayList<>();
+        for (int i=1;i<=productDao.getAmountPages();i++){
+            pages.add(i);
+        }
         model.addAttribute("products", list);
+        model.addAttribute("pages",pages);
         return "products";
     }
 
-    @GetMapping("/deletebyid")
-    public String deleteById(Model model, @RequestParam Long id) {
+    @GetMapping("/removebyid/{id}")
+    public String deleteById(Model model, @PathVariable(value = "id") Long id) {
         Product product = null;
         product = productDao.findById(id);
         productDao.deleteById(id);
         model.addAttribute("product", product);
-        return "deletebyid";
+        return "redirect:/product/findall/1";
     }
 
     @GetMapping("/showForm")
@@ -57,6 +64,6 @@ public class ProductController {
     public String processForm(@ModelAttribute Product product, Model model) {
         product = productDao.saveOrUpdate(product);
         model.addAttribute("product", product);
-        return "formresult";
+        return "redirect:/product/findall/1";
     }
 }

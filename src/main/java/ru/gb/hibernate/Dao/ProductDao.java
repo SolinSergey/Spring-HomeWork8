@@ -4,7 +4,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.gb.hibernate.entities.Product;
-
 import javax.persistence.Query;
 import java.util.List;
 
@@ -26,15 +25,33 @@ public class ProductDao {
         }
         return product;
     }
-
-    public List<Product> findAll() {
-        List<Product> list = null;
+    public int getAmountPages (){
+        int fullAmountRecord=0;
         try (Session session = daoConnection.getSessionFactory().getCurrentSession()) {
             session.beginTransaction();
-            list = session.createQuery("from Product").getResultList();
+            List<Product> list = session.createQuery("from Product").getResultList();
+            fullAmountRecord=list.size();
+            session.getTransaction().commit();
+            if (fullAmountRecord % 10!=0){
+                fullAmountRecord=fullAmountRecord/10+1;
+            }
+            else{
+                fullAmountRecord=fullAmountRecord/10;
+            }
+        }
+        return fullAmountRecord;
+    }
+    public List<Product> findAll(int page) {
+        List<Product> pr;
+        try (Session session = daoConnection.getSessionFactory().getCurrentSession()) {
+            session.beginTransaction();
+            pr = session.createQuery("SELECT p  FROM Product p order by p.id asc", Product.class)
+                    .setFirstResult((page-1)*10)
+                    .setMaxResults(10)
+                    .getResultList();
             session.getTransaction().commit();
         }
-        return list;
+        return pr;
     }
 
     public void deleteById(Long id) {
